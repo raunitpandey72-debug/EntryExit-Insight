@@ -1,19 +1,17 @@
 import datetime as dt
+from pathlib import Path
 import re
 
 import streamlit as st
 
-ICON_PATH = (
-    r"C:\Users\Raunit.pandey\.cursor\projects\172-16-8-30-Data-Team-"
-    r"Raunit-pandey-Python-Code\assets\c__Users_Raunit.pandey_AppData_Roaming_"
-    r"Cursor_User_workspaceStorage_59c140deed42203cdbb38e0c5008b85d_images_"
-    r"watch-bbd9e502-1cb5-4fd1-b307-20b271e7d1d6.png"
-)
+BASE_DIR = Path(__file__).resolve().parent
+ICON_PATH = BASE_DIR / "Icon.png"
+PAGE_ICON = str(ICON_PATH) if ICON_PATH.exists() else "⏱️"
 
 
 st.set_page_config(
     page_title="EntryExit Insight",
-    page_icon=ICON_PATH,
+    page_icon=PAGE_ICON,
     layout="wide",
 )
 
@@ -259,7 +257,10 @@ def summarize_sessions(
 
 title_col1, title_col2 = st.columns([1, 12], vertical_alignment="center")
 with title_col1:
-    st.image(ICON_PATH, width=52)
+    if ICON_PATH.exists():
+        st.image(str(ICON_PATH), width=52)
+    else:
+        st.markdown("### ⏱️")
 with title_col2:
     st.title("EntryExit Insight")
 st.caption("Paste your biometric log data below to calculate work and break times.")
