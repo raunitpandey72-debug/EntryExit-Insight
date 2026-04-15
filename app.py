@@ -1,12 +1,20 @@
 import datetime as dt
 from pathlib import Path
 import re
+from zoneinfo import ZoneInfo
 
 import streamlit as st
 
 BASE_DIR = Path(__file__).resolve().parent
 ICON_PATH = BASE_DIR / "Icon.png"
 PAGE_ICON = str(ICON_PATH) if ICON_PATH.exists() else "⏱️"
+PUNE_TZ = ZoneInfo("Asia/Kolkata")
+
+
+def now_pune() -> dt.datetime:
+    # Keep a timezone-correct clock while preserving naive datetimes
+    # used throughout the app's existing calculations.
+    return dt.datetime.now(PUNE_TZ).replace(tzinfo=None)
 
 
 st.set_page_config(
@@ -188,7 +196,7 @@ def format_clock(total_seconds: int) -> str:
 
 def extract_times(log_text: str) -> list[dt.datetime]:
     matches = re.findall(r"\b(?:[01]?\d|2[0-3]):[0-5]\d\b", log_text)
-    current_day = dt.date.today()
+    current_day = now_pune().date()
     points: list[dt.datetime] = []
     last_dt = None
 
@@ -235,7 +243,7 @@ def summarize_sessions(
 
     # Odd number of punches means user is currently in an active work session.
     if len(time_points) % 2 == 1:
-        current_time = current_time or dt.datetime.now()
+        current_time = current_time or now_pune()
         if current_time < time_points[-1]:
             current_time += dt.timedelta(days=1)
         ongoing_work = int((current_time - time_points[-1]).total_seconds())
@@ -264,7 +272,7 @@ with title_col1:
 with title_col2:
     st.title("EntryExit Insight")
 st.caption("Paste your biometric log data below to calculate work and break times.")
-st.caption(f"Live PC time: {dt.datetime.now().strftime('%d-%b-%Y %I:%M:%S %p')}")
+st.caption(f"Pune time (IST): {now_pune().strftime('%d-%b-%Y %I:%M:%S %p')}")
 
 st.markdown("**Biometric Log Input**")
 log_input = st.text_area(
@@ -297,7 +305,7 @@ def render_live_dashboard() -> None:
     if not points:
         return
 
-    result = summarize_sessions(points, current_time=dt.datetime.now())
+    result = summarize_sessions(points, current_time=now_pune())
     target_work_seconds = hms_to_seconds(7, 30, 0)
     target_break_seconds = hms_to_seconds(1, 30, 0)
     total_work = result["total_work"] + result["ongoing_work"]
