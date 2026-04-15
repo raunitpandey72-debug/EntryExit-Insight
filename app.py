@@ -333,3 +333,14 @@ def render_live_dashboard() -> None:
 
 
 render_live_dashboard()
+
+st.markdown("---")
+st.markdown("#### Feedback")
+st.text_area(
+    "Share your feedback",
+    label_visibility="collapsed",
+    placeholder=(
+        "If you want any aditional feature on this website, "
+        "give it up in feedback."
+    ),
+)
