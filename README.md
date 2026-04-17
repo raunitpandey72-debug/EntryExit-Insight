@@ -13,7 +13,7 @@ Local Streamlit app for common time calculations with a custom green/orange them
 ## Run locally
 
 1. Open terminal in this folder:
-   - `cd "\\172.16.8.30\Data_Team\Raunit pandey\Python Code\time_calculator_local"`
+   - `cd "\\..\time_calculator_local"`
 2. Install dependencies:
    - `py -m pip install -r requirements.txt`
 3. Start app:
